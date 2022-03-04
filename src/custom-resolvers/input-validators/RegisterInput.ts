@@ -19,7 +19,4 @@ export default class RegisterInput {
 
   @Field()
   password: string;
-
-  @Field()
-  job: string;
 }

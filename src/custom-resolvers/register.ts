@@ -21,7 +21,6 @@ class RegisterResolver {
         lastname,
         email,
         password: hashedPassword,
-        job,
         role: 'USER',
       },
     });
