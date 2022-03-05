@@ -12,7 +12,7 @@ class RegisterResolver {
   async register(
     @Ctx() ctx: { prisma: PrismaClient },
     @Arg('data', () => RegisterInput)
-    { email, firstname, lastname, password, job }: RegisterInput
+    { email, firstname, lastname, password }: RegisterInput
   ): Promise<User> {
     const hashedPassword = await bcrypt.hash(password, 12);
     const user = await ctx.prisma.user.create({
