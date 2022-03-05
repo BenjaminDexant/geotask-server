@@ -23,12 +23,38 @@ enum UserRole {
   ADMIN
 }
 
+model Task {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  completed Boolean  @default(false)
+  description String?
+  latitude  Float?
+  longitude Float?
+  eventStart DateTime?
+  eventEnd   DateTime?
+
+  // Add relation to user
+  userId    String
+  user      User      @relation(references: [id], fields: [userId])
+
+  updatedAt DateTime  @updatedAt
+  createdAt DateTime
+}
+
 // Define user model
 model User {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
   email     String    @unique
   password  String
-  firstname String
-  lastname  String
+  firstname String?
+  lastname  String?
+
+  // Add relation to Task
+  tasks     Task[]
+
+  // Add role USER by default
   role      UserRole @default(USER)
+
+  updatedAt DateTime  @updatedAt
+  createdAt DateTime
 }
