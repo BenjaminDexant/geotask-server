@@ -13,7 +13,10 @@ import register from './custom-resolvers/register';
 import users from './custom-resolvers/users';
 import login from './custom-resolvers/login';
 
-import { applyResolversEnhanceMap, resolvers } from '../prisma/generated/type-graphql';
+import {
+  applyResolversEnhanceMap,
+  resolvers,
+} from '../prisma/generated/type-graphql';
 
 import { mapped } from './add-crud-middleware';
 
@@ -23,18 +26,16 @@ const MyServer = async () => {
   app.use(cookieParser());
   // add cors in .env file
   app.use(
-    cors(
-      {
-        credentials: true,
-        origin: [
-          'https://studio.apollographql.com', // playground Apollo GraphQL /!\ only in developpenment
-          'http://localhost:5000/graphql', // localhost:5050
-          'http://localhost:3000' // app React
-        ],
-      }
-    )
+    cors({
+      credentials: true,
+      origin: [
+        'https://studio.apollographql.com', // playground Apollo GraphQL /!\ only in developpenment
+        'http://localhost:5000/graphql', // localhost:5050
+        'http://localhost:3000', // app React
+      ],
+    })
   );
-  
+
   const httpServer = http.createServer(app);
 
   applyResolversEnhanceMap(mapped);
