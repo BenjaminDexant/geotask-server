@@ -3,12 +3,11 @@
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["mongoDb"]
 }
 
 generator typegraphql {
   provider = "typegraphql-prisma"
-  output   = "../prisma/generated/type-graphql"
+  output   = "./generated/type-graphql"
 }
 
 datasource db {
@@ -16,29 +15,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 // Define user role
 enum UserRole {
   USER
   ADMIN
-}
-
-model Task {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  title     String
-  completed Boolean  @default(false)
-  description String?
-  latitude  Float?
-  longitude Float?
-  eventStart DateTime?
-  eventEnd   DateTime?
-
-  // Add relation to user
-  userId    String
-  user      User      @relation(references: [id], fields: [userId])
-
-  updatedAt DateTime  @updatedAt
-  createdAt DateTime
 }
 
 // Define user model
@@ -46,15 +26,50 @@ model User {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
   email     String    @unique
   password  String
-  firstname String?
-  lastname  String?
+  firstname String
+  lastname  String
 
-  // Add relation to Task
-  tasks     Task[]
+  // A user can have many collections
+  collections     Collection[]
 
-  // Add role USER by default
+  // The role of a user
   role      UserRole @default(USER)
 
   updatedAt DateTime  @updatedAt
-  createdAt DateTime
+  createdAt DateTime  @default(now())
+}
+
+// Define collection model
+model Collection {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+
+  // The owner of the collection
+  userId    String    @map("userId")
+  user      User      @relation(fields: [userId], references: [id])
+
+  // A collection can have many tasks
+  tasks     Task[]
+
+  updatedAt DateTime  @updatedAt
+  createdAt DateTime  @default(now())
+}
+
+// Define task model
+model Task {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  completed Boolean  @default(false)
+  description String?
+  latitude  String?
+  longitude String?
+  eventStart DateTime?
+  eventEnd   DateTime?
+
+  // The collection this task belongs to
+  collectionId    String
+  collection      Collection      @relation(references: [id], fields: [collectionId])
+
+  updatedAt DateTime  @updatedAt
+  createdAt DateTime  @default(now())
 }
