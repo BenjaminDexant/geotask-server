@@ -1,10 +1,24 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { UseMiddleware } from 'type-graphql';
-import { ResolversEnhanceMap, User } from '../prisma/generated/type-graphql';
+import {
+  ResolversEnhanceMap,
+  User,
+  Collection,
+  Task,
+} from '../prisma/generated/type-graphql';
 import checkToken from './middlewares/checkToken';
+import refreshToken from './middlewares/refreshToken';
 
-// eslint-disable-next-line import/prefer-default-export
-export const mapped: ResolversEnhanceMap = {
+const mapped: ResolversEnhanceMap = {
   User: {
-    _all: [UseMiddleware(checkToken)],
+    _all: [UseMiddleware(checkToken), UseMiddleware(refreshToken)],
+  },
+  Collection: {
+    _all: [UseMiddleware(checkToken), UseMiddleware(refreshToken)],
+  },
+  Task: {
+    _all: [UseMiddleware(checkToken), UseMiddleware(refreshToken)],
   },
 };
+
+export default mapped;

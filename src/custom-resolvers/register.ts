@@ -12,11 +12,19 @@ class RegisterResolver {
   async register(
     @Ctx() ctx: { prisma: PrismaClient },
     @Arg('data', () => RegisterInput)
-    { email, password }: RegisterInput
+    { firstname, lastname, email, password }: RegisterInput
   ): Promise<User> {
+    const user = await ctx.prisma.user.findUnique({ where: { email } });
+
+    if (user) {
+      throw new Error('Email already in use');
+    }
+
     const hashedPassword = await bcrypt.hash(password, 12);
-    const user = await ctx.prisma.user.create({
+    const newUser = await ctx.prisma.user.create({
       data: {
+        firstname,
+        lastname,
         email,
         password: hashedPassword,
         role: 'USER',
@@ -25,7 +33,7 @@ class RegisterResolver {
       },
     });
 
-    return user;
+    return newUser;
   }
 }
 

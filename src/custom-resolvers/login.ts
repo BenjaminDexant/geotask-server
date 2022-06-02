@@ -11,7 +11,7 @@ import { User } from '../../prisma/generated/type-graphql';
 
 @Resolver()
 class LoginResolver {
-  @Query(() => User) // Omit password from User class
+  @Query(() => User)
   async login(
     @Ctx() ctx: { prisma: PrismaClient; res: Response },
     @Arg('data', () => LoginInput)
@@ -37,7 +37,7 @@ class LoginResolver {
       process.env.JWTSECRET || 'MYSUPERSECRET',
       { expiresIn: '1h' }
     );
-    console.log(token);
+    console.log(token); // for developpement purpose only
 
     // token for mobile app
     // ctx.res.set("x-auth-token", token);
@@ -46,8 +46,11 @@ class LoginResolver {
     ctx.res?.cookie('accessToken', token, {
       maxAge: 1000 * 60 * 60,
       httpOnly: true,
+      secure: true,
     });
-    // 1hour cookie validation & httpOnly readable only by server, avoid attacks and problems related to XSS
+    // 1hour cookie validation
+    // httpOnly readable only by server, avoid attacks and problems related to XSS
+    // scure to authorize only on https
 
     return userToReturn;
   }

@@ -12,3 +12,6 @@ dev.sqlite3
 # Ignore generated files and directories from prisma generate command
 prisma/generated/
 schema.gql
+
+# Ignore docker-compose.yml
+docker-compose.yml
