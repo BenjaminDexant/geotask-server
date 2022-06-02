@@ -11,13 +11,14 @@ import { context } from './context';
 
 import register from './custom-resolvers/register';
 import login from './custom-resolvers/login';
+import users from './custom-resolvers/users';
 
 import {
   applyResolversEnhanceMap,
   resolvers,
 } from '../prisma/generated/type-graphql';
 
-import { mapped } from './add-crud-middleware';
+import mapped from './add-crud-middleware';
 
 const MyServer = async () => {
   // Initialize Express and HTTP server
@@ -30,7 +31,8 @@ const MyServer = async () => {
       origin: [
         'https://studio.apollographql.com', // playground Apollo GraphQL /!\ only in developpenment
         'http://localhost:5000/graphql', // localhost:5050
-        'http://localhost:3000', // app React
+        'http://localhost:3000', // app React for développement
+        'http://localhost:19006', // mobile app for développement
       ],
     })
   );
@@ -41,7 +43,7 @@ const MyServer = async () => {
 
   // Build GraphQL schema from TS entities and resolvers
   const schema = await tq.buildSchema({
-    resolvers: [...resolvers, register, login],
+    resolvers: [...resolvers, login, register, users],
     emitSchemaFile: true,
   });
 
