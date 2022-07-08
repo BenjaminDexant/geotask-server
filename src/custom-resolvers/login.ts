@@ -1,5 +1,3 @@
-import { PrismaClient } from '@prisma/client';
-import { Response } from 'express';
 import { Arg, Ctx, Query, Resolver } from 'type-graphql';
 
 import bcrypt from 'bcrypt';
@@ -7,16 +5,18 @@ import jwt from 'jsonwebtoken';
 
 import LoginInput from './input-validators/LoginInput';
 
-import { User } from '../../prisma/generated/type-graphql';
+import { Context } from '../context';
+
+import UserWithToken from './custom-types/userWithToken';
 
 @Resolver()
 class LoginResolver {
-  @Query(() => User)
+  @Query(() => UserWithToken)
   async login(
-    @Ctx() ctx: { prisma: PrismaClient; res: Response },
+    @Ctx() ctx: Context,
     @Arg('data', () => LoginInput)
     { email, password }: LoginInput
-  ): Promise<Partial<User>> {
+  ): Promise<Partial<UserWithToken>> {
     const user = await ctx.prisma.user.findUnique({ where: { email } });
 
     if (!user) {
@@ -39,9 +39,6 @@ class LoginResolver {
     );
     console.log(token); // for developpement purpose only
 
-    // token for mobile app
-    // ctx.res.set("x-auth-token", token);
-
     // token for web app
     ctx.res?.cookie('accessToken', token, {
       maxAge: 1000 * 60 * 60,
@@ -52,7 +49,8 @@ class LoginResolver {
     // httpOnly readable only by server, avoid attacks and problems related to XSS
     // scure to authorize only on https
 
-    return userToReturn;
+    // return token for mobile app
+    return { ...userToReturn, token };
   }
 }
 
