@@ -11,6 +11,7 @@ import { context } from './context';
 
 import register from './custom-resolvers/register';
 import login from './custom-resolvers/login';
+import logout from './custom-resolvers/logout';
 import users from './custom-resolvers/users';
 
 import {
@@ -43,7 +44,7 @@ const MyServer = async () => {
 
   // Build GraphQL schema from TS entities and resolvers
   const schema = await tq.buildSchema({
-    resolvers: [...resolvers, login, register, users],
+    resolvers: [...resolvers, register, login, logout, users],
     emitSchemaFile: true,
   });
 
@@ -52,7 +53,6 @@ const MyServer = async () => {
     schema,
     context: ({ req, res }) => ({
       prisma: context.prisma,
-      // cookies: req.cookies,
       req,
       res,
     }),
